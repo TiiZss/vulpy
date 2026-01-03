@@ -10,6 +10,17 @@
 
 > **Note**: This is a modernized fork of the original [Vulpy](https://github.com/fportantier/vulpy) by [Fabian Portantier](https://github.com/fportantier). Special thanks for creating this excellent educational tool!
 
+## ⚡ Key Differences from Original
+
+This fork (`TiiZss/vulpy`) introduces significant modernization and security updates compared to the original version:
+
+1.  **OWASP ASVS 5.0 (2023)**: Updated the verification standard from v4.0 to v5.0.
+2.  **Global CSRF Protection**: Implemented `Flask-WTF` with hidden tokens in all forms (Original lacked robust CSRF in "Good" version).
+3.  **Secure Session Management**: Removed hardcoded secrets and enforced `HttpOnly`, `Secure`, and `SameSite` cookie attributes.
+4.  **No `| safe` Filters**: Completely removed insecure Jinja2 filters to rely on auto-escaping for XSS prevention.
+5.  **Docker Support**: Improved `Dockerfile` and `docker-compose.yml` for a one-click deployment of both environments.
+6.  **Documentation**: Added a detailed [Cheat Sheet](cheat_sheet_bad.md) for exploitation and a [Changelog](CHANGELOG.md).
+
 ## 🎯 Project Overview
 
 This lab provides two versions of the same application:
