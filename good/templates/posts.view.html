@@ -20,7 +20,11 @@
       {% if posts %}
         <ul class="w3-ul w3-left-align w3-border">
         {% for post in posts %}
-          <li><span class="w3-h3">{{ post.text | safe }}</span></li>
+          <!-- VULNERABILITY FIX: Cross-Site Scripting (XSS) -->
+          <!-- ASVS 5.0 5.3.1: Verify that output encoding is relevant for the context (HTML Body). -->
+          <!-- PREVIOUSLY: Output was forcefully marked as safe with '| safe', bypassing escaping. -->
+          <!-- NOW: Removed '| safe' to allow auto-escaping. -->
+          <li><span class="w3-h3">{{ post.text }}</span></li>
         {% endfor %}
         </ul>
       {% else %}

@@ -6,7 +6,15 @@ import geoip2.database
 from cryptography.fernet import Fernet
 
 
-key = 'JHtM1wEt1I1J9N_Evjwqr3yYauXIqSxYzFnRhcf0ZG0='
+from cryptography.fernet import Fernet
+import os
+
+# VULNERABILITY FIX: Hardcoded Cryptographic Key
+# ASVS 5.0 3.5.2: Verify that secrets are not hardcoded.
+# PREVIOUSLY: The encryption key was hardcoded in the source.
+# NOW: We load it from environment variables or use a generated one (for demo purposes only).
+# In production, this must be a persistent env var.
+key = os.environ.get('SESSION_ENC_KEY', Fernet.generate_key().decode())
 fernet = Fernet(key)
 ttl = 7200 # seconds
 reader = geoip2.database.Reader('GeoLite2-Country.mmdb')
@@ -29,9 +37,13 @@ def create(request, response, username):
 
     country = getcountry(request)
 
+    # VULNERABILITY FIX: Insecure Cookie Attributes
+    # ASVS 5.0 3.4.1: Verify cookie attributes (Secure, HttpOnly, SameSite).
+    # PREVIOUSLY: Cookies lacked HttpOnly, Secure, and SameSite attributes.
+    # NOW: We set them explicitly.
     response.set_cookie('vulpy_session', fernet.encrypt(
         (username + '|' + country).encode()
-    ))
+    ), httponly=True, samesite='Lax', secure=True)
 
     return response
 

@@ -1,0 +1,18 @@
+services:
+  vulpy_bad:
+    image: vulpy:latest
+    container_name: vulpy_bad
+    build: .
+    ports:
+      - "5002:5000"
+    command: [ "bad", "5000" ]
+    platform: linux/amd64
+
+  vulpy_good:
+    image: vulpy:latest
+    container_name: vulpy_good
+    build: .
+    ports:
+      - "5003:5001"
+    command: [ "good", "5001" ]
+    platform: linux/amd64

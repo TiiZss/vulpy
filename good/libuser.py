@@ -58,7 +58,12 @@ def user_create(username, password=None):
     conn.set_trace_callback(print)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    c.execute("INSERT INTO users (username, password, salt, failures, mfa_enabled, mfa_secret) VALUES ('%s', '%s', '%s', '%d', '%d', '%s')" %(username, '', '', 0, 0, ''))
+    # VULNERABILITY FIX: SQL Injection
+    # ASVS 5.0 5.3.4: Verify that data selection or database queries (e.g., SQL, HQL, XML, LDAP, NoSQL, etc.) use parameterized queries or are effectively prevented from SQL injection.
+    # ASVS 5.0 5.3.5: Verify that parameterized queries are used instead of string concatenation/interpolation.
+    # PREVIOUSLY: input was concatenated directly into the query string: ... VALUES ('%s', ...
+    # NOW: We use parameterized queries (?) which the database driver handles safely.
+    c.execute("INSERT INTO users (username, password, salt, failures, mfa_enabled, mfa_secret) VALUES (?, ?, ?, ?, ?, ?)", (username, '', '', 0, 0, ''))
     conn.commit()
 
     if password:
